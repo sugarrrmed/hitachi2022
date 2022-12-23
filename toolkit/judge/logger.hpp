@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <sstream>
 #define __FILENAME__ (std::filesystem::path{__FILE__}.filename().c_str())
-#define DEFAULT_DEBUG_LEVEL 4
+#define DEFAULT_DEBUG_LEVEL 2
 #ifndef DEBUG_LEVEL
 #define DEBUG_LEVEL DEFAULT_DEBUG_LEVEL
 #endif

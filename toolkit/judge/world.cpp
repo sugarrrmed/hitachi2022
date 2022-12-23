@@ -420,7 +420,7 @@ final_result_t World::interact(std::istream& is, std::ostream& os) {
         wr, TAG(ValueGroup::SCORE, score_integer));
     end_json_log_output(std::to_string(score_integer), unfinished_penalty);
     os.precision(os_prec_old);
-    INFO("Final score:%" PRId64, score_integer);
+    ERROR("Final score:%" PRId64, score_integer);//ここだけ変更した
     return score_integer;
 }
 void World::log_mutable_info_only(discrete_time_t crt0b, bool e) const {
