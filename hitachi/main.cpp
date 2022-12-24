@@ -10,7 +10,6 @@ using namespace std;
 #define ld long double
 
 
-
 //Assign one job to each worker and execute the job
 
 struct IOServer {
@@ -137,6 +136,7 @@ struct IOServer {
 
 struct solver{
     //determine worker's job
+    
     vector<int> worker_job;
     void init(){
         worker_job.resize(IOServer.N_worker,-1);
@@ -178,11 +178,15 @@ struct solver{
         }
         long long score;
         cin>>score; // read score to avoid TLE
+        cerr<<"---------最終スコア---------->"<<score<<endl;
     }
 } solver;
 
 int main(int argc, char *argv[] ){
+    
     IOServer.input();
     solver.init();
     solver.solve();
+    
+    return 0;
 }
