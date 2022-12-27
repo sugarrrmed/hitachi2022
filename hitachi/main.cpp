@@ -165,8 +165,8 @@ struct job{
     ll type;
     ll L;//問題文だとNだけど、Lに変えた。
     ll pos;
-   // vl reward;
     vl_l reward;
+    vl money;
     vl depend;
 };
 vector<job>jobs;
@@ -232,6 +232,17 @@ void input(){
             rep(j,0,N-1){
                 cin>>jobs[i].reward[j].fi>>jobs[i].reward[j].se;
             }
+            auto calc=[](vl_l a,ll t){
+                vl ret(t+2);
+                rep(i,0,(int)a.size()-2){
+                    rep(j,a[i].fi,a[i+1].fi){
+                        assert(0<=j && j<=t+1);
+                        ret[j] = a[i].se + (j-a[i].fi) * (a[i+1].se - a[i].se)/(dd)(a[i+1].fi-a[i].fi);
+                    }
+                }
+                return ret;
+            };
+            jobs[i].money = calc(jobs[i].reward,T_max);
         }
         {
             ll N;cin>>N;
@@ -267,6 +278,9 @@ void output(Ans ans){
     vl movetime(N_worker + 1);
     vl pos(N_worker + 1);
     rep(i,1,N_worker)pos[i] = workers[i].pos;
+    
+    ll SCORE = 0;
+    
     rep(t_time,1,T_max){
         
         rep(z,1,N_worker){
@@ -301,14 +315,21 @@ void output(Ans ans){
                 cout<<"stay"<<endl;
             }else{
                 cout<<"execute "<<v[0].job<<" "<<L<<endl;
+                
+                if(jobs[v[0].job].money[t_time] == 0){
+                    cerr<<t_time<<" "<<z<<" "<<v[0].job<<" "<<L<<endl;
+                }
+                assert(jobs[v[0].job].money[t_time] > 0);
                 res_job[v[0].job] -= L;
                 v[0].time --;
+                SCORE += jobs[v[0].job].money[t_time] * L;
             }
         }
     }
     
-    ll return_score;cin>>return_score;
-    DEB(return_score);
+    ll ret_score;cin>>ret_score;
+    DEB(SCORE);
+    DEB(ret_score);
     exit(0);
 }
 
@@ -317,46 +338,74 @@ ll roundup(ll a,ll b){
     return (a+b-1)/b;
 }
 
+void greedy(Ans &ans){
+    vl job_endtime(N_job+1,inf);
+    
+    vl worker_pos(N_worker + 1);
+    rep(i,1,N_worker){
+        worker_pos[i] = workers[i].pos;
+    }
+    vl prog_time(N_worker + 1);
+    while(1){
+        bool koushin = false;
+        rep(i,1,N_worker){
+            vl start_time(N_job + 1, inf);
+            rep(j,1,N_job){
+                bool ng=false;
+                if(workers[i].type[jobs[j].type] == 0)ng=true;
+                if(job_endtime[j] < inf)ng=true;
+                
+                ll req_time = roundup(jobs[j].L,workers[i].L_max);
+                ll arrive_time = DIST[worker_pos[i]][jobs[j].pos] + prog_time[i];
+                
+                ll start_time_j = max(arrive_time, jobs[j].reward[0].fi);
+                for(ll x:jobs[j].depend){
+                    if(job_endtime[x] > start_time_j)ng=true;
+                }
+                
+                if(ng)continue;
+                
+                if(start_time_j + req_time < jobs[j].reward.back().fi){
+                    chmin(start_time[j],start_time_j);
+                }
+                // (start_time, start_time + req_time] で money を参照する
+            }
+            {
+                ll posj = 0;
+                rep(j,1,N_job){
+                    if(start_time[j] < start_time[posj]){
+                        posj = j;
+                    }
+                }
+                if(posj == 0)continue;
+                
+                ll req_time = roundup(jobs[posj].L,workers[i].L_max);
+                ll arrive_time = DIST[worker_pos[i]][jobs[posj].pos] + prog_time[i];
+                
+                ans.vec[i].pb({start_time[posj] - arrive_time ,posj ,req_time});
+                
+                
+                assert(job_endtime[posj] == inf);
+                job_endtime[posj] = start_time[posj] + req_time;
+                
+                koushin = true;
+                prog_time[i] = start_time[posj] + req_time;
+                worker_pos[i] = jobs[posj].pos;
+                
+            }
+        }
+        if(koushin==false)break;
+    }
+}
+
 signed main(){fastio
     
     input();
     
-    Ans ans;
-    ans.vec.resize(N_worker+1);
+    Ans ans;ans.vec.resize(N_worker+1);
     
-    vl used_job(N_job+1);
-    rep(i,1,N_worker){
-        vl start_time(N_job + 1, inf);
-        rep(j,1,N_job){
-            bool ng=false;
-            if(!jobs[j].depend.empty())ng=true;
-            if(workers[i].type[jobs[j].type] == 0)ng=true;
-            if(used_job[j] == 1)ng=true;
-            
-            if(ng)continue;
-            
-            ll req_time = roundup(jobs[j].L,workers[i].L_max);
-            ll move_time = DIST[workers[i].pos][jobs[j].pos];
-            if(move_time + req_time < jobs[j].reward.back().fi){
-                chmin(start_time[j], max(move_time, jobs[j].reward[0].fi+1));
-            }
-        }
-        {
-            ll posj = 0;
-            rep(j,1,N_job){
-                if(start_time[j] < start_time[posj]){
-                    posj = j;
-                }
-            }
-            assert(posj != 0);
-            ll req_time = roundup(jobs[posj].L,workers[i].L_max);
-            ll move_time = DIST[workers[i].pos][jobs[posj].pos];
-            ans.vec[i].pb({start_time[posj] - move_time ,posj ,req_time});
-            
-            assert(used_job[posj] == 0);
-            used_job[posj] = 1;
-        }
-    }
+    greedy(ans);
+    
     
     output(ans);
     
