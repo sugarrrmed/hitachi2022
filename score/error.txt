@@ -2,97 +2,87 @@
 T_max: 300
 N_job: 1000
 N_worker: 10
-82883.3100000000ms
-----------output----------
-SCORE: 323197107031
-ret_score: 323197168928
+2651.0960000000ms
+ans.score: 327491504485
+SCORE: 327491504486
+ret_score: 325476237800
+log_score: 11.5125192873
 T_max: 1000
 N_job: 500
 N_worker: 5
-45999.0020000000ms
-----------output----------
-SCORE: 473499197429
-ret_score: 473499291765
+1954.0770000000ms
+ans.score: 534218871843
+SCORE: 534217582549
+ret_score: 534039320059
+log_score: 11.7275732343
 T_max: 1000
 N_job: 502
 N_worker: 10
-67937.0370000000ms
-----------output----------
-780 8 307 69
-Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
-GAIN FUNCTION DEBUG INFO:
-[[779,0],[780,594662],[805,404212],[831,399471],[856,469906],[882,1023976],[907,1705831],[933,1661172],[958,2517455],[959,0]]
-Adjacent values:0 0 594662
-terminate called after throwing an instance of 'WrongAnswerError'
-  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=779,v=0)
-./toolkit/judge.sh: 35 行: 18592 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
-     18593 終了                  | tee debug_input.txt
-     18594                       | stdbuf -i0 -o0 -e0 "${@:3}"
-     18595 終了                  | tee debug_output.txt > $FIFO
+2805.9720000000ms
+正しいか確認して 994 6
+正しいか確認して 995 6
+正しいか確認して 996 6
+正しいか確認して 997 6
+正しいか確認して 998 6
+正しいか確認して 999 6
+正しいか確認して 1000 6
+ans.score: 672543754601
+SCORE: 672542789917
+ret_score: 672347408025
+log_score: 11.8275937350
 T_max: 1000
 N_job: 250
 N_worker: 10
-20830.8340000000ms
-----------output----------
-153 2 63 90
-Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
-GAIN FUNCTION DEBUG INFO:
-[[152,0],[153,2199513],[178,1992810],[203,951055],[227,1797037],[252,1637367],[277,1331465],[302,1293908],[326,1578102],[351,2279580],[376,2596259],[401,3443038],[426,2781511],[450,3000541],[475,2005127],[500,1489419],[525,676355],[549,681588],[574,428386],[599,341056],[600,0]]
-Adjacent values:0 0 2.19951e+06
-terminate called after throwing an instance of 'WrongAnswerError'
-  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=152,v=0)
-./toolkit/judge.sh: 35 行: 18654 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
-     18655 終了                  | tee debug_input.txt
-     18656                       | stdbuf -i0 -o0 -e0 "${@:3}"
-     18657 終了                  | tee debug_output.txt > $FIFO
+973.6390000000ms
+ans.score: 362507929676
+SCORE: 362507929676
+ret_score: 362508026212
+log_score: 11.5593176266
 T_max: 1000
 N_job: 1000
 N_worker: 5
-143656.0550000000ms
-----------output----------
-SCORE: 756262901465
-ret_score: 756263023917
+4729.1760000000ms
+ans.score: 800833575094
+SCORE: 800833575094
+ret_score: 798874985325
+log_score: 11.9024788226
 T_max: 700
 N_job: 250
 N_worker: 5
-7487.4560000000ms
-----------output----------
-SCORE: 219428921568
-ret_score: 219428969778
+390.8470000000ms
+ans.score: 278900153055
+SCORE: 278900153056
+ret_score: 277647458797
+log_score: 11.4434937029
 T_max: 1000
 N_job: 1001
 N_worker: 1
-1335.2750000000ms
-----------output----------
-SCORE: 102890843379
-ret_score: 102890855202
+688.9620000000ms
+ans.score: 106282945918
+SCORE: 106282945918
+ret_score: 105282098805
+log_score: 11.0223545340
 T_max: 1000
 N_job: 1000
 N_worker: 1
-1930.2890000000ms
-----------output----------
-SCORE: 172576528800
-ret_score: 172576551178
+915.4200000000ms
+ans.score: 171132003500
+SCORE: 171132003501
+ret_score: 168511904231
+log_score: 11.2266305863
 T_max: 1000
 N_job: 500
 N_worker: 5
-23418.8860000000ms
-----------output----------
-806 4 264 93
-Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
-GAIN FUNCTION DEBUG INFO:
-[[805,0],[806,1672922],[831,2004193],[856,2403197],[881,1454325],[906,2154068],[931,1637995],[956,1289923],[981,1897328],[982,0]]
-Adjacent values:0 0 1.67292e+06
-terminate called after throwing an instance of 'WrongAnswerError'
-  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=805,v=0)
-./toolkit/judge.sh: 35 行: 18880 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
-     18881 終了                  | tee debug_input.txt
-     18882                       | stdbuf -i0 -o0 -e0 "${@:3}"
-     18883 終了                  | tee debug_output.txt > $FIFO
+965.0740000000ms
+ans.score: 367870034114
+SCORE: 367870034114
+ret_score: 367658920504
+log_score: 11.5654451077
 T_max: 300
 N_job: 1002
 N_worker: 2
-6657.7130000000ms
-----------output----------
-SCORE: 61905142907
-ret_score: 61905152147
+522.6560000000ms
+ans.score: 63719635991
+SCORE: 63719635991
+ret_score: 62076139388
+log_score: 10.7929246996

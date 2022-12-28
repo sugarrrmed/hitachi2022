@@ -270,7 +270,94 @@ struct Ans{
     vva vec;
     ll score = 0;
 };
-
+/*
+void output(Ans ans){
+ 
+    vvvl print(N_worker + 1,vvl(T_max+1));
+    rep(man,1,N_worker){
+        ll time = 1;
+        ll pre_pos = workers[man].pos;
+        for(action x:ans.vec[man]){
+            if(x.mati == inf){
+                //最後のflag
+                while(time<=T_max)print[man][time++] ={1};
+                break;
+            }
+            ll dist = DIST[pre_pos][jobs[x.job].pos];
+            rep(_,1,dist){
+                assert(time<=T_max);
+                print[man][time++] = {2,jobs[x.job].pos};
+            }pre_pos = jobs[x.job].pos;
+            
+            rep(_,1,x.mati){
+                assert(time<=T_max);
+                print[man][time++] = {1};
+            }
+            
+            ll res_job = jobs[x.job].L;
+            rep(_,1,x.time){
+                assert(time<=T_max);
+                ll L = min(res_job,workers[man].L_max);
+                res_job -= L;
+                assert(L>0);
+                print[man][time++] = {3,x.job,L};
+            }
+        }
+        while(time<=T_max)print[man][time++]={1};
+    }
+    {
+        vl cnt_job(N_job+1);
+        
+        rep(man,1,N_worker){
+            rep(time,1,T_max){
+                vl v = print[man][time];
+                if(v[0] == 3){
+                    cnt_job[v[1]] += v[2];
+                }
+            }
+        }
+        
+        rep(job,1,N_job){
+            if(cnt_job[job] > jobs[job].L)cerr<<job<<" "<<cnt_job[job]<<" "<<jobs[job].L<<endl;
+        }
+    }
+    
+    ll SCORE = 0;
+    rep(time,1,T_max){
+        rep(man,1,N_worker){
+            vl p = print[man][time];
+            assert((int)p.size()>=1);
+            if(p[0]==1){
+                cout<<"stay";
+            }else if(p[0] == 2){
+                cout<<"move ";
+            }else if(p[0] == 3){
+                cout<<"execute ";
+                if(jobs[p[1]].money[time] == 0){
+                    DEB(time);
+                    DEB(man);
+                    DEB(p);
+                    DEB(jobs[p[1]].reward);
+                }
+                assert(jobs[p[1]].money[time]>0);
+                SCORE += jobs[p[1]].money[time] * p[2];
+            }else{
+                assert(0);
+            }
+            assert((int)p.size()==p[0]);
+            rep(i,1,(int)p.size()-1){
+                cout<<p[i]<<" ";
+            }cout<<endl;
+        }
+    }
+    ll ret_score;cin>>ret_score;
+    DEB(ans.score);
+    DEB(SCORE);
+    DEB(ret_score);
+    dd log_score = log10(ret_score);
+    DEB(log_score);
+}
+*/
 void output(Ans ans){
     vl res_job(N_job+1);
     rep(i,1,N_job)res_job[i] = jobs[i].L;
@@ -282,7 +369,6 @@ void output(Ans ans){
     ll SCORE = 0;
     
     rep(t_time,1,T_max){
-        
         rep(z,1,N_worker){
             auto &v = ans.vec[z];
             while(!v.empty() && v[0].mati == 0 && v[0].time == 0){
@@ -292,6 +378,11 @@ void output(Ans ans){
                 cout<<"stay"<<endl;
                 continue;
             }
+            if(v[0].mati == inf){
+                cout<<"stay"<<endl;
+                continue;
+            }
+            
             if(movetime[z] == 0 && pos[z] != jobs[v[0].job].pos){
                 movetime[z] = DIST[pos[z]][jobs[v[0].job].pos];
             }
@@ -328,85 +419,173 @@ void output(Ans ans){
     }
     
     ll ret_score;cin>>ret_score;
+    DEB(ans.score);
     DEB(SCORE);
     DEB(ret_score);
-    exit(0);
+    dd log_score = log10(ret_score);
+    DEB(log_score);
 }
-
 ll roundup(ll a,ll b){
     assert(a>=0 && b>0);
     return (a+b-1)/b;
 }
 
-void greedy(Ans &ans){
-    vl job_endtime(N_job+1,inf);
+
+Ans beamsearch(){
+    typedef pair<ll,dd> l_d;
+    typedef vector<l_d> vl_d;
+    struct Data{
+        vva vec;
+        dd score;
+        vl job_endtime;
+        vl res_job;
+        vl_d add_score;
+    };
     
-    vl worker_pos(N_worker + 1);
-    rep(i,1,N_worker){
-        worker_pos[i] = workers[i].pos;
+    vector<Data>pres;
+    {
+        Data init;
+        init.vec.resize(N_worker+1);
+        init.score = 0;
+        init.job_endtime.assign(N_job+1,inf);
+        init.add_score.assign(N_worker+1,{0,0});
+        init.res_job.resize(N_job+1);
+        rep(i,1,N_job)init.res_job[i] = jobs[i].L;
+        pres.pb(init);
     }
-    vl prog_time(N_worker + 1);
-    while(1){
-        bool koushin = false;
-        rep(i,1,N_worker){
-            vl start_time(N_job + 1, inf);
-            rep(j,1,N_job){
-                bool ng=false;
-                if(workers[i].type[jobs[j].type] == 0)ng=true;
-                if(job_endtime[j] < inf)ng=true;
-                
-                ll req_time = roundup(jobs[j].L,workers[i].L_max);
-                ll arrive_time = DIST[worker_pos[i]][jobs[j].pos] + prog_time[i];
-                
-                ll start_time_j = max(arrive_time, jobs[j].reward[0].fi);
-                for(ll x:jobs[j].depend){
-                    if(job_endtime[x] > start_time_j)ng=true;
+    
+    rep(time,1,T_max){
+        rep(man,1,N_worker){
+            vector<Data>nexts;
+            for(Data pre:pres){
+                if(pre.add_score[man].fi>0){
+                    Data next = pre;
+                    next.add_score[man].fi--;
+                    next.score += next.add_score[man].se;
+                    nexts.pb(next);
+                    continue;
+                }
+                if(!pre.vec[man].empty() && pre.vec[man].back().mati == inf){
+                    nexts.pb(pre);
+                    continue;
                 }
                 
-                if(ng)continue;
+                ll pre_pos;
+                if(pre.vec[man].empty())pre_pos = workers[man].pos;
+                else pre_pos = jobs[pre.vec[man].back().job].pos;
                 
-                if(start_time_j + req_time < jobs[j].reward.back().fi){
-                    chmin(start_time[j],start_time_j);
+                bool not_found = true;
+                rep(job,1,N_job){
+                    bool ng=false;
+                    if(pre.job_endtime[job]<inf)ng=true;
+                    if(workers[man].type[jobs[job].type] == 0)ng=true;
+                    
+                    ll move_time = DIST[pre_pos][jobs[job].pos];
+                    ll start_time = max(time + move_time,jobs[job].reward.front().fi + 1);
+                    ll mati_time = start_time - (time + move_time) ;
+                    ll req_time = roundup(pre.res_job[job],workers[man].L_max);
+                    ll end_time = start_time + req_time - 1;
+                    if(end_time >= jobs[job].reward.back().fi)ng=true;
+                    
+                    for(ll x:jobs[job].depend){
+                        if(pre.job_endtime[x] >= time)ng=true;
+                    }
+                    if(ng)continue;
+                    Data next = pre;
+                    ll money_all = 0;
+                    {
+                        rep(z,start_time,end_time){
+                            ll use_L = min(next.res_job[job],workers[man].L_max);
+                            money_all += jobs[job].money[z] * use_L;
+                            assert(use_L > 0);
+                            assert(jobs[job].money[z]>0);
+                            next.res_job[job] -= use_L;
+                        }
+                        assert(next.res_job[job] == 0);
+                    }
+                    ll all_time = end_time - time + 1;
+                    dd money_ave = (dd)money_all / all_time;
+                    
+                    next.vec[man].pb({mati_time,job,req_time});
+                    next.score += money_ave;
+                    next.job_endtime[job] = end_time;
+                    next.add_score[man] = {all_time-1,money_ave};
+                    next.res_job[job] = 0;
+                    nexts.pb(next);
+                    not_found = false;
                 }
-                // (start_time, start_time + req_time] で money を参照する
-            }
-            {
-                ll posj = 0;
-                rep(j,1,N_job){
-                    if(start_time[j] < start_time[posj]){
-                        posj = j;
+                if(not_found){
+                    rep(job,1,N_job){
+                        bool ng=false;
+                        if(pre.job_endtime[job]<inf)ng=true;
+                        if(workers[man].type[jobs[job].type] == 0)ng=true;
+                        
+                        ll move_time = DIST[pre_pos][jobs[job].pos];
+                        ll start_time = max(time + move_time,jobs[job].reward.front().fi + 1);
+                        ll mati_time = start_time - (time + move_time) ;
+                        ll end_time = start_time + roundup(pre.res_job[job],workers[man].L_max) -1;
+                        chmin(end_time,T_max);
+                        chmin(end_time,jobs[job].reward.back().fi-1);
+                        ll req_time = end_time - start_time + 1;
+                        if(req_time <= 0)ng=true;
+                        for(ll x:jobs[job].depend){
+                            if(pre.job_endtime[x] >= time)ng=true;
+                        }
+                        if(ng)continue;
+                        Data next = pre;
+                        ll money_all = 0;
+                        {
+                            rep(z,start_time,end_time){
+                                ll use_L = min(next.res_job[job],workers[man].L_max);
+                                money_all += jobs[job].money[z] * use_L;
+                                assert(use_L > 0);
+                                assert(jobs[job].money[z]>0);
+                                next.res_job[job] -= use_L;
+                            }
+                            if(next.res_job[job] == 0){
+                                next.job_endtime[job] = end_time;
+                            }
+                        }
+                        ll all_time = end_time - time + 1;
+                        dd money_ave = (dd)money_all / all_time;
+                        next.vec[man].pb({mati_time,job,req_time});
+                        next.score += money_ave;
+                        next.add_score[man] = {all_time-1,money_ave};
+                        nexts.pb(next);
+                        not_found = false;
                     }
                 }
-                if(posj == 0)continue;
-                
-                ll req_time = roundup(jobs[posj].L,workers[i].L_max);
-                ll arrive_time = DIST[worker_pos[i]][jobs[posj].pos] + prog_time[i];
-                
-                ans.vec[i].pb({start_time[posj] - arrive_time ,posj ,req_time});
-                
-                
-                assert(job_endtime[posj] == inf);
-                job_endtime[posj] = start_time[posj] + req_time;
-                
-                koushin = true;
-                prog_time[i] = start_time[posj] + req_time;
-                worker_pos[i] = jobs[posj].pos;
-                
+                {
+                    Data next = pre;
+                    next.vec[man].pb({inf,-1,-1});
+                    nexts.pb(next);
+                }
             }
+            sort(all(nexts),[](Data a,Data b){return a.score > b.score;});
+            while((int)nexts.size()>2)nexts.pop_back();
+            pres = nexts;
         }
-        if(koushin==false)break;
+    }
+    {
+        Ans ret;
+        ret.vec = pres.front().vec;
+        ret.score = pres.front().score;
+        return ret;
     }
 }
 
 signed main(){fastio
+    clock_gettime(CLOCK_REALTIME, &START_TIME);
+    
     
     input();
+    DEB(T_max);
+    DEB(N_job);
+    DEB(N_worker);
     
-    Ans ans;ans.vec.resize(N_worker+1);
+    Ans ans = beamsearch();
     
-    greedy(ans);
-    
-    
+    cerr<<stop_watch()<<"ms"<<endl;
     output(ans);
     
     return 0;

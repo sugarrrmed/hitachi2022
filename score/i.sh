@@ -21,7 +21,7 @@ for seed in {1..10};do
     cd ../../
 
 
-    /usr/local/bin/g++-12 -std=gnu++17  -Wextra -O2 -DONLINE_JUDGE -D=LOCAL -Wl,-stack_size -Wl,0x11110000         beam.cpp
+    /usr/local/bin/g++-12 -std=gnu++17  -Wextra -O2 -DONLINE_JUDGE -D=LOCAL -Wl,-stack_size -Wl,0x11110000         b.cpp
 
     ./toolkit/judge.sh toolkit/generator/testcase.txt toolkit/visualizer/default.json ./a.out 2>> error.txt
 
