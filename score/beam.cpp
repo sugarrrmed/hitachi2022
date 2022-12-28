@@ -467,7 +467,7 @@ Ans beamsearch(){
                 nexts.pb(pre);
             }
             sort(all(nexts),[](Data a,Data b){return a.score>b.score;});
-            while((int)nexts.size()>2)nexts.pop_back();
+            while((int)nexts.size()>50)nexts.pop_back();
             pres = nexts;
         }
     }

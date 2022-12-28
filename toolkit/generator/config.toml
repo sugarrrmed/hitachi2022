@@ -39,7 +39,7 @@ seed = 1234
 #  値の範囲:1以上
 #  分布対応:YES
 #T_max = [300, 700, 1000]
-T_max = [1000]
+T_max = [ 1000]
 
 #  マップサイズ
 # 
@@ -90,7 +90,7 @@ map_edge_num_hard_limit_coeff = [[1.33333333333333, 2.0]]
 #  値の範囲:1以上
 #  分布対応:YES
 #worker_num = [1, 2, 5, 10]
-worker_num = [10]
+worker_num = [ 10]
 
 #  ワーカーが処理可能なタイプの個数
 # 
@@ -119,7 +119,7 @@ worker_max_task_processing_num = "30+71*x"
 #  値の範囲:1以上
 #  分布対応:YES
 #job_num = [250, 500, 1000]
-job_num = [1000]
+job_num = [ 1000]
 
 #  ジョブのタイプ分布(0-based)
 # 

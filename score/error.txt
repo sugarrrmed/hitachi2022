@@ -2,70 +2,97 @@
 T_max: 300
 N_job: 1000
 N_worker: 10
-2207.9850000000ms
+82883.3100000000ms
 ----------output----------
-SCORE: 313251963397
-ret_score: 313252024049
+SCORE: 323197107031
+ret_score: 323197168928
 T_max: 1000
 N_job: 500
 N_worker: 5
-1424.7620000000ms
+45999.0020000000ms
 ----------output----------
-SCORE: 469961063498
-ret_score: 469961153152
+SCORE: 473499197429
+ret_score: 473499291765
 T_max: 1000
 N_job: 502
 N_worker: 10
-1708.5690000000ms
+67937.0370000000ms
 ----------output----------
-SCORE: 497217992907
-ret_score: 497218098259
+780 8 307 69
+Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
+GAIN FUNCTION DEBUG INFO:
+[[779,0],[780,594662],[805,404212],[831,399471],[856,469906],[882,1023976],[907,1705831],[933,1661172],[958,2517455],[959,0]]
+Adjacent values:0 0 594662
+terminate called after throwing an instance of 'WrongAnswerError'
+  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=779,v=0)
+./toolkit/judge.sh: 35 行: 18592 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
+     18593 終了                  | tee debug_input.txt
+     18594                       | stdbuf -i0 -o0 -e0 "${@:3}"
+     18595 終了                  | tee debug_output.txt > $FIFO
 T_max: 1000
 N_job: 250
 N_worker: 10
-584.4920000000ms
+20830.8340000000ms
 ----------output----------
-SCORE: 206834647887
-ret_score: 206834702916
+153 2 63 90
+Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
+GAIN FUNCTION DEBUG INFO:
+[[152,0],[153,2199513],[178,1992810],[203,951055],[227,1797037],[252,1637367],[277,1331465],[302,1293908],[326,1578102],[351,2279580],[376,2596259],[401,3443038],[426,2781511],[450,3000541],[475,2005127],[500,1489419],[525,676355],[549,681588],[574,428386],[599,341056],[600,0]]
+Adjacent values:0 0 2.19951e+06
+terminate called after throwing an instance of 'WrongAnswerError'
+  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=152,v=0)
+./toolkit/judge.sh: 35 行: 18654 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
+     18655 終了                  | tee debug_input.txt
+     18656                       | stdbuf -i0 -o0 -e0 "${@:3}"
+     18657 終了                  | tee debug_output.txt > $FIFO
 T_max: 1000
 N_job: 1000
 N_worker: 5
-3305.2130000000ms
+143656.0550000000ms
 ----------output----------
-SCORE: 746026725434
-ret_score: 746026844518
+SCORE: 756262901465
+ret_score: 756263023917
 T_max: 700
 N_job: 250
 N_worker: 5
-284.4280000000ms
+7487.4560000000ms
 ----------output----------
-SCORE: 213568633657
-ret_score: 213568681202
+SCORE: 219428921568
+ret_score: 219428969778
 T_max: 1000
 N_job: 1001
 N_worker: 1
-483.9060000000ms
+1335.2750000000ms
 ----------output----------
-SCORE: 101761035290
-ret_score: 101761048093
+SCORE: 102890843379
+ret_score: 102890855202
 T_max: 1000
 N_job: 1000
 N_worker: 1
-637.6610000000ms
+1930.2890000000ms
 ----------output----------
-SCORE: 168293640203
-ret_score: 168293661718
+SCORE: 172576528800
+ret_score: 172576551178
 T_max: 1000
 N_job: 500
 N_worker: 5
-684.3570000000ms
+23418.8860000000ms
 ----------output----------
-SCORE: 338035185499
-ret_score: 338035249688
+806 4 264 93
+Assertion failed: (jobs[v[0].job].money[t_time] > 0), function output, file beam.cpp, line 323.
+GAIN FUNCTION DEBUG INFO:
+[[805,0],[806,1672922],[831,2004193],[856,2403197],[881,1454325],[906,2154068],[931,1637995],[956,1289923],[981,1897328],[982,0]]
+Adjacent values:0 0 1.67292e+06
+terminate called after throwing an instance of 'WrongAnswerError'
+  what():  [job_manager.cpp:137] Cannot be processed when the gain value is zero or negative.(t=805,v=0)
+./toolkit/judge.sh: 35 行: 18880 Abort trap: 6           stdbuf -i0 -o0 -e0 ${EXEC_NAME} $TESTCASE $LOG_OUTPUT < $FIFO
+     18881 終了                  | tee debug_input.txt
+     18882                       | stdbuf -i0 -o0 -e0 "${@:3}"
+     18883 終了                  | tee debug_output.txt > $FIFO
 T_max: 300
 N_job: 1002
 N_worker: 2
-339.1590000000ms
+6657.7130000000ms
 ----------output----------
-SCORE: 60518431573
-ret_score: 60518441200
+SCORE: 61905142907
+ret_score: 61905152147
