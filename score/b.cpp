@@ -574,6 +574,106 @@ Ans beamsearch(){
     }
 }
 
+ll calc_score(vvl ans,bool end_print){
+    vl pos(N_worker+1);
+    rep(i,1,N_worker)pos[i] = workers[i].pos;
+    vl res_job(N_job+1);
+    rep(i,1,N_job)res_job[i] = jobs[i].L;
+    vl end_job(N_job+1);
+    vl score_job(N_job+1);
+    
+    vvvl print(T_max+1,vvl(N_worker+1));
+    rep(time,1,T_max){
+        vl ends;
+        rep(man,1,N_worker){
+            while(1){
+                if(!print[time][man].empty())break;
+                if(ans[man].empty() || ans[man].front() == -1){
+                    print[time][man] = {1};
+                    break;
+                }
+                ll job = ans[man].front();
+                if(pos[man] != jobs[job].pos){
+                    ll dist = DIST[pos[man]][jobs[job].pos];
+                    pos[man] = jobs[job].pos;
+                    rep(z,time,min(T_max,time+dist-1)){
+                        print[z][man] = {2,pos[man]};
+                    }
+                    break;
+                }
+                assert(workers[man].type[jobs[job].type] == 1);
+                if(res_job[job] == 0){
+                    ans[man].erase(ans[man].begin());
+                    continue;
+                }
+                bool ng=false;
+                if(jobs[job].money[time] == 0){
+                    if(time <= jobs[job].reward.front().fi){
+                        ng=true;
+                    }else{
+                        assert(time >= jobs[job].reward.back().fi);
+                        ans[man].erase(ans[man].begin());
+                        continue;
+                    }
+                }
+                for(ll x:jobs[job].depend){
+                    if(end_job[x] == 0)ng=true;
+                }
+                if(ng){
+                    print[time][man] = {1};
+                    break;
+                }
+                ll L = min(workers[man].L_max,res_job[job]);
+                assert(L>0);
+                ll money = jobs[job].money[time];
+                assert(time>0);
+                score_job[job] += L*money;
+                print[time][man] = {3,job,L};
+                res_job[job] -= L;
+                if(res_job[job] == 0){
+                    ends.pb(job);
+                }
+            }
+        }
+        for(ll x:ends){
+            assert(end_job[x] == 0);
+            end_job[x] = 1;
+        }
+    }
+    
+    ll score = 0;
+    rep(job,1,N_job){
+        if(end_job[job]){
+            score += score_job[job];
+        }
+    }
+    
+    if(end_print){
+        rep(time,1,T_max){
+            rep(man,1,N_worker){
+                vl p = print[time][man];
+                assert(!p.empty());
+                assert(p[0] == (int)p.size());
+                rep(i,0,(int)p.size()-1){
+                    if(i==0){
+                        if(p[0] == 1)cout<<"stay ";
+                        else if(p[0]==2)cout<<"move ";
+                        else cout<<"execute ";
+                    }else{
+                        cout<<p[i]<<" ";
+                    }
+                }cout<<endl;
+            }
+        }
+        DEB(score);
+        ll ret_score;cin>>ret_score;
+        DEB(ret_score);
+        dd log_score = log10(ret_score);
+        DEB(log_score);
+    }
+    return score;
+}
+
 signed main(){fastio
     clock_gettime(CLOCK_REALTIME, &START_TIME);
     
@@ -585,8 +685,72 @@ signed main(){fastio
     
     Ans ans = beamsearch();
     
+    
+  //  output(ans);
+    
+    vvl now_ans(N_worker+1);
+    rep(man,1,N_worker){
+        for(action x:ans.vec[man]){
+            now_ans[man].pb(x.job);
+        }
+    }
+    
+    vl now_flag(N_job+1);
+    for(vl x:now_ans)for(ll y:x)now_flag[y]++;
+    
+    ll now_score = calc_score(now_ans,false);
+    rep(loop,1,1e9){
+        if(stop_watch() >= 4800){
+            cerr<<"break loop is "<<loop<<endl;
+            break;
+        }
+        vvl next_ans = now_ans;
+        while(1){
+            /*
+             ll man = rand(1,N_worker);
+            ll jobpos = rand(0,(int)now_ans[man].size()-1);
+            ll new_job = rand(1,N_job);
+            if(now_flag[new_job] >= 1)continue;
+            if(workers[man].type[jobs[new_job].type] == 0)continue;
+            ll pre_job = next_ans[man][jobpos];
+            if(pre_job == new_job)continue;
+            next_ans[man][jobpos] = new_job;
+            ll next_score = calc_score(next_ans,false);
+            if(now_score < next_score){
+                now_score = next_score;
+                now_ans = next_ans;
+                now_flag[pre_job] --;
+                now_flag[new_job] ++;
+                cerr<<setw(5)<<loop<<" "<<now_score<<endl;
+            }
+            break;
+             //*/
+            //*
+            ll man1 = rand(1,N_worker);
+            ll man2 = rand(1,N_worker);
+            ll jobpos1 = rand(0,(int)next_ans[man1].size()-1);
+            ll jobpos2 = rand(0,(int)next_ans[man2].size()-1);
+            ll job1 = next_ans[man1][jobpos1];
+            ll job2 = next_ans[man2][jobpos2];
+            if(workers[man1].type[jobs[job2].type] == 0)continue;
+            if(workers[man2].type[jobs[job1].type] == 0)continue;
+            next_ans[man1][jobpos1] = job2;
+            next_ans[man2][jobpos2] = job1;
+            ll next_score = calc_score(next_ans,false);
+            if(now_score < next_score){
+                now_score = next_score;
+                now_ans = next_ans;
+                cerr<<setw(5)<<loop<<" "<<now_score<<endl;
+            }
+            break;
+             //*/
+        }
+    }
+    
     cerr<<stop_watch()<<"ms"<<endl;
-    output(ans);
+    calc_score(now_ans,true);
     
     return 0;
 }
+
+//mean 11.458033133633839
